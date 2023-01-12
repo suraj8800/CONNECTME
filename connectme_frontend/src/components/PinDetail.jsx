@@ -11,11 +11,32 @@ import Spinner from './Spinner';
 
 function PinDetail({user}) {
   const [pins, setPins] = useState(null);
-  const [pinDetail, setPinDetails] = useState(null);
+  const [pinDetail, setPinDetail] = useState(null);
   const [comment, setComment] = useState('');
   const [addingComment, setAddingComment] = useState(false);
   //ID...
   const { pinId } = useParams();
+
+  const fetchPinDetails = () => {
+    const query = pinDetailQuery(pinId);
+
+    if (query) {
+      client.fetch(`${query}`).then((data) => {
+        setPinDetail(data[0]);
+        console.log(data);
+        if (data[0]) {
+          const query1 = pinDetailMorePinQuery(data[0]);
+          client.fetch(query1).then((res) => {
+            setPins(res);
+          });
+        }
+      });
+    }
+  };
+
+  useEffect(() => {
+    fetchPinDetails();
+  }, [pinId]);
 
   const addComment = () => {
     if (comment) {
@@ -34,34 +55,15 @@ function PinDetail({user}) {
     }
   };
 
-  const fetchPinDetails = () => {
-    let query = pinDetailQuery(pinId);
-
-    if(query) {
-      client.fetch(query)
-            .then((data) => {
-              setPinDetails(data[0]);
-
-              if(data[0]) {
-                query = pinDetailMorePinQuery(data[0]);
-
-                client.fetch(query)
-                      .then((res) => setPins(res));
-              }
-            })
-    }
-  }
-
-  useEffect(() => {
-    fetchPinDetails();
-  }, [pinId])
-
-  if(!pinDetail) {
-    return <Spinner message="Loading pin..." />
+  if (!pinDetail) {
+    return (
+      <Spinner message="Showing pin" />
+    );
   }
 
   return (
     <>
+      {pinDetail && (
       <div
         className="flex xl-flex-row flex-col m-auto bg-white"
         style={{ maxWidth: "1500px", borderRadus: "32px" }}
@@ -112,7 +114,7 @@ function PinDetail({user}) {
           </Link>
           <h2 className="mt-5 text-2xl">Comments</h2>
           <div className="max-h-370 overflow-y-auto">
-            {pinDetail?.comments?.map((comment, i) => {
+            {pinDetail?.comments?.map((comment, i) => (
               <div
                 className="flex gap-2 mt-5 bg-white items-center rounded-lg"
                 key={i}
@@ -126,14 +128,14 @@ function PinDetail({user}) {
                   <p className="font-bold">{comment.postedBy.userName}</p>
                   <p>{comment.comment}</p>
                 </div>
-              </div>;
-            })}
+              </div>
+            ))}
           </div>
           <div className="flex flex-wrap mt-6 gap-3">
-            <Link to={`/user-profile/${pinDetail.postedBy?._id}`}>
+            <Link to={`/user-profile/${user?._id}`}>
               <img
                 className="w-10 h-10 rounded-full cursor-pointer"
-                src={pinDetail.postedBy?.image}
+                src={user?.image}
                 alt="user-profile"
               />
             </Link>
@@ -154,7 +156,8 @@ function PinDetail({user}) {
           </div>
         </div>
       </div>
-      {console.log(pins)}
+      )}
+      
       {pins?.length > 0 ? (
         <>
           <h2 className="text-center font-bold text-2xl mt-8 mb-4">
