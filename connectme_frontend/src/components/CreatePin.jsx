@@ -113,7 +113,7 @@ function CreatePin({ user }) {
               </label>
             ):(
               <div className='relative h-full'>
-                <img src={imageAsset?.url} alt="uploaded-pic" classname="h-full w-full" />
+                <img src={imageAsset?.url} alt="uploaded-pic" className="h-full w-full" />
                 <button 
                   type='button'
                   className="absolute bottom-3 right-3 p-3 rounded-full bg-white text-xl cursor-pointer outline-none hover:shadow-md transition-all duration-500 ease-in-out"
@@ -153,7 +153,7 @@ function CreatePin({ user }) {
           />
           <input
             type="url"
-            vlaue={destination}
+            value={destination}
             onChange={(e) => setDestination(e.target.value)}
             placeholder="Add a destination link"
             className="outline-none text-base sm:text-lg border-b-2 border-gray-200 p-2"
