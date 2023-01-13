@@ -6,11 +6,11 @@ import { feedQuery, searchQuery } from '../utils/data';
 import Spinner from './Spinner';
 
 function Search({ searchTerm }) {
-  const [pins, setPins] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [pins, setPins] = useState();
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (searchTerm !== "") {
+    if (searchTerm !== '') {
       setLoading(true);
       const query = searchQuery(searchTerm.toLowerCase());
       client.fetch(query).then((data) => {
@@ -27,13 +27,14 @@ function Search({ searchTerm }) {
 
   return (
     <div>
-      {loading && <Spinner message="Searching for pins..." />}
-      {pins?.length !==0 && <MasonryLayout pins={pins} />}
-      {pins?.length === 0 && searchTerm !== '' && !loading &&
-        <div className='mt-10 text-center text-xl'>No pins found</div>
-      }
+
+      {loading && <Spinner message="Searching pins" />}
+      {pins?.length !== 0 && <MasonryLayout pins={pins} />}
+      {pins?.length === 0 && searchTerm !== '' && !loading && (
+        <div className="mt-10 text-center text-xl ">No Pins Found!</div>
+      )}
     </div>
-  )
+  );
 }
 
 export default Search
